@@ -27,6 +27,7 @@ class DeviceManager
     bool is_changed();
 
     int lcd_init();
+
     int devices_init();
 
     int view(bool state_long_pressed_action_btn ,bool action_button , bool rigth_button ,bool left_button);
@@ -35,6 +36,9 @@ class DeviceManager
 
     
     int handler(Button* action_button ,Button* rigth_button , Button* left_button);
+
+    void update_ios();
+
 
   private:
     Device _devices[10];

@@ -11,7 +11,7 @@ lcd(0x27,16,2)
   for (int x; x < sizeof(devices)+1 ; x++){
     _devices[x].device_name = devices[x].device_name;
     _devices[x].device_pin = devices[x].device_pin;
-    _devices[x].is_active = devices[x].is_active;
+    _devices[x].is_active = false;
   }
   _lengh_devices = sizeof(devices);
 }
@@ -26,7 +26,7 @@ DeviceManager::lcd_init()
   lcd.setCursor(0, 1);
   for(int x=0 ; x<17 ; x++){
     lcd.print("=");
-    delay(200);
+    delay(100);
   };
   lcd.clear();
 }
@@ -39,7 +39,7 @@ DeviceManager::devices_init()
     lcd.print(_devices[x].device_name);
     lcd.setCursor(0, 1);
     lcd.print("OK");
-    delay(600);
+    delay(100);
     lcd.clear();
     delay(100);
   }
@@ -77,8 +77,18 @@ bool DeviceManager::is_changed()
   return false;
 }
 
+void DeviceManager::update_ios()
+{
+  for (int x = 0 ; x < _lengh_devices+1 ; x++){
+    digitalWrite( _devices[x].device_pin , _devices[x].is_active );
+  };
+}
+
+
 DeviceManager::handler(Button* action_button,Button* rigth_button , Button* left_button)
 {
+  DeviceManager::update_ios();
+
   state_action_btn = action_button->isClicked();
   state_long_pressed_action_btn = action_button->isLongedPressed(3000);
 
@@ -94,8 +104,13 @@ DeviceManager::handler(Button* action_button,Button* rigth_button , Button* left
       state_rigth_btn,
       state_left_btn);
   }
-    
+
+
+  
+
+
 }
+
 
 
 
