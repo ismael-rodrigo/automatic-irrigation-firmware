@@ -29,7 +29,8 @@ bool Button::isClicked()
   }
 };
 
-bool Button::isLongedPressed(const int milliseconds){
+bool Button::isLongedPressed(const int milliseconds)
+{
 if(!digitalRead(_btn_pin) && !_flas_is_long_pressed){
 
   if((unsigned long)( millis() - _lasted_time ) >= milliseconds ){
