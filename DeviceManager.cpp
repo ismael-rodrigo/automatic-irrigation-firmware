@@ -12,6 +12,8 @@ lcd(0x27,16,2)
     _devices[x].device_name = devices[x].device_name;
     _devices[x].device_pin = devices[x].device_pin;
     _devices[x].is_active = false;
+    _devices[x].flow_rate = 10;
+    _devices[x].flow_rate_sec = 10;
   }
   _lengh_devices = sizeof(devices);
 }
@@ -45,10 +47,6 @@ DeviceManager::devices_init()
   }
 }
 
-
-
-
-
 bool flag_changed;
 bool first_update = true ;
 bool buttons_state;
@@ -77,20 +75,26 @@ bool DeviceManager::is_changed()
   return false;
 }
 
-void DeviceManager::update_ios()
+
+
+void DeviceManager::updateSettingsDevice(int device_id , int delay_automatic_active ,int opening_hours , int flow_rate ,int flow_rate_display_labels)
 {
-  for (int x = 0 ; x < _lengh_devices+1 ; x++){
-    digitalWrite( _devices[x].device_pin , _devices[x].is_active );
-  };
+
+_devices[device_id].delay_automatic_active = delay_automatic_active;
+_devices[device_id].opening_hours = opening_hours;
+_devices[device_id].flow_rate_sec = flow_rate;
+_devices[device_id].flow_rate = flow_rate_display_labels;
 }
+
+
+
 
 
 DeviceManager::handler(Button* action_button,Button* rigth_button , Button* left_button)
 {
-  DeviceManager::update_ios();
 
   state_action_btn = action_button->isClicked();
-  state_long_pressed_action_btn = action_button->isLongedPressed(3000);
+  state_long_pressed_action_btn = action_button->isLongedPressed(1000);
 
 
   state_rigth_btn  = rigth_button->isClicked();
