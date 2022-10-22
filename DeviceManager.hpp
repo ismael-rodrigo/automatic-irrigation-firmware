@@ -5,7 +5,7 @@
 #include <Wire.h>
 #include <LiquidCrystal_I2C.h>
 #include "Button.hpp"
-
+#include <EEPROM.h>
 
 struct Device {
     String device_name;
@@ -47,6 +47,8 @@ class DeviceManager
     int handler(Button* action_button ,Button* rigth_button , Button* left_button);
 
     void updateSettingsDevice(int device_id , int delay_automatic_active ,int opening_hours , int flow_rate , int flow_rate_display_labels);
+    void getSettingsEeprom();
+
 
   private:
     Device _devices[10];
