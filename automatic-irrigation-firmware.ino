@@ -1,5 +1,6 @@
 #include "DeviceManager.hpp"
 #include "Button.hpp"
+#include <EEPROM.h>
 
 Button ActiveButton(2), RightButton(3), LeftButton(4);
 
