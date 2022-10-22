@@ -16,10 +16,14 @@ lcd(0x27,16,2)
     _devices[x].is_active = false;
     _devices[x].flow_rate = 10;
     _devices[x].flow_rate_sec = 10;
+
+
+    _devices[x].delay_automatic_active = EEPROM.read(((x+1)*10) + 1 );
+    _devices[x].opening_hours = EEPROM.read(((x+1)*10) + 2 );
+    _devices[x].flow_rate_sec = EEPROM.read(((x+1)*10) + 3 );
+    _devices[x].flow_rate = EEPROM.read(((x+1)*10) + 4 );
   }
   _lengh_devices = sizeof(devices);
-  delay(50);
-  DeviceManager::getSettingsEeprom();
 
 }
 
@@ -92,31 +96,13 @@ _devices[device_id].flow_rate_sec = flow_rate;
 _devices[device_id].flow_rate = flow_rate_display_labels;
 
 
-EEPROM.update(((device_id+1)*10) + 1 ,  delay_automatic_active  );
-EEPROM.update(((device_id+1)*10) + 2 ,  opening_hours  );
-EEPROM.update(((device_id+1)*10) + 3 ,  flow_rate  );
-EEPROM.update(((device_id+1)*10) + 4 ,  flow_rate_display_labels  );
+EEPROM.update(((device_id+1)*10) + 1 , delay_automatic_active );
+EEPROM.update(((device_id+1)*10) + 2 , opening_hours );
 
+EEPROM.update(((device_id+1)*10) + 3 , flow_rate ); //in sec
+EEPROM.update(((device_id+1)*10) + 4 , flow_rate_display_labels );
 
 }
-
-
-void DeviceManager::getSettingsEeprom()
-{
-  for(int x=0; x < _lengh_devices+ 1; x++){
-    _devices[x].delay_automatic_active = EEPROM.read(((x+1)*10) + 1);
-    _devices[x].opening_hours = EEPROM.read(((x+1)*10) + 2 );
-    _devices[x].flow_rate_sec = EEPROM.read(((x+1)*10) + 3 );
-    _devices[x].flow_rate = EEPROM.read(((x+1)*10) + 4 );
-    delay(5);
-  }
-  
-}
-
-
-
-
-
 
 
 
