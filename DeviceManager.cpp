@@ -3,12 +3,13 @@
 #include <Wire.h>
 #include <LiquidCrystal_I2C.h>
 #include "Button.hpp"
-
 #include <EEPROM.h>
+
 
 
 DeviceManager::DeviceManager(struct Device devices[]):
 lcd(0x27,16,2)
+
 {
   for (int x; x < sizeof(devices)+1 ; x++){
     _devices[x].device_name = devices[x].device_name;
@@ -16,7 +17,8 @@ lcd(0x27,16,2)
     _devices[x].is_active = false;
     _devices[x].flow_rate = 10;
     _devices[x].flow_rate_sec = 10;
-
+  
+  
 
     _devices[x].delay_automatic_active = EEPROM.read(((x+1)*10) + 1 );
     _devices[x].opening_hours = EEPROM.read(((x+1)*10) + 2 );
@@ -25,10 +27,24 @@ lcd(0x27,16,2)
   }
   _lengh_devices = sizeof(devices);
 
+
+  
+
+}
+
+void DeviceManager::rtc_init()
+{
+  rtc.begin();
+  delay(50);
+  for (int x; x < _lengh_devices + 1 ; x++){
+    _devices[x].next_active = rtc.now() + TimeSpan(0, _devices[x].delay_automatic_active, 0, 0);
+  };
+
 }
 
 
-DeviceManager::lcd_init()
+
+void DeviceManager::lcd_init()
 {
   lcd.init();
   lcd.setBacklight(HIGH);
@@ -42,7 +58,7 @@ DeviceManager::lcd_init()
   lcd.clear();
 }
 
-DeviceManager::devices_init()
+void DeviceManager::devices_init()
 {
   for(int x = 0; x < _lengh_devices + 1 ; x++){
     pinMode(_devices[x].device_pin , OUTPUT);
@@ -55,6 +71,7 @@ DeviceManager::devices_init()
     delay(100);
   }
 }
+
 
 bool flag_changed;
 bool first_update = true ;
@@ -86,28 +103,64 @@ bool DeviceManager::is_changed()
 
 
 
-void DeviceManager::updateSettingsDevice(int device_id , int delay_automatic_active ,int opening_hours , int flow_rate ,int flow_rate_display_labels)
+void DeviceManager::updateSettingsDevice(int device_id)
 {
+  _devices[device_id].next_active = rtc.now();
+  _devices[device_id].next_active = _devices[device_id].next_active + TimeSpan(0, 0, 0, _devices[device_id].delay_automatic_active);
+
+  EEPROM.update(((device_id+1)*10) + 1 , _devices[device_id].delay_automatic_active );
+
+  EEPROM.update(((device_id+1)*10) + 2 , _devices[device_id].opening_hours );
+ 
+  EEPROM.update(((device_id+1)*10) + 3 , _devices[device_id].flow_rate_sec ); //in sec
+  
+  EEPROM.update(((device_id+1)*10) + 4 , _devices[device_id].flow_rate );
+}
 
 
-_devices[device_id].delay_automatic_active = delay_automatic_active;
-_devices[device_id].opening_hours = opening_hours;
-_devices[device_id].flow_rate_sec = flow_rate;
-_devices[device_id].flow_rate = flow_rate_display_labels;
+void DeviceManager::verify_timers_and_update()
+{
+  for(int x = 0; x < _lengh_devices + 1 ; x++){
+    
+    if( rtc.now() >= _devices[x].next_active ){
+      _devices[x].is_active = true ;
+      
+    }
+  }
+}
 
+DateTime active_time;
+void DeviceManager::verify_is_active()
+{
+  for(int x = 0; x < _lengh_devices + 1 ; x++){
+    
+    if(_devices[x].is_active && !digitalRead(_devices[x].device_pin)){
+      active_time = rtc.now() + TimeSpan(0, 0, 0, _devices[x].flow_rate);
+    }
+    if(_devices[x].is_active)
+    {
+      digitalWrite(_devices[x].device_pin , true);
+      if(active_time < rtc.now()){
+        _devices[x].is_active = false;
+        _devices[x].last_active = rtc.now();
+        _devices[x].next_active = rtc.now() + TimeSpan(0, 0, 0, _devices[x].delay_automatic_active);
+        digitalWrite(_devices[x].device_pin , false);
+      }
+    }
 
-EEPROM.update(((device_id+1)*10) + 1 , delay_automatic_active );
-EEPROM.update(((device_id+1)*10) + 2 , opening_hours );
-
-EEPROM.update(((device_id+1)*10) + 3 , flow_rate ); //in sec
-EEPROM.update(((device_id+1)*10) + 4 , flow_rate_display_labels );
+    
+  }
 
 }
 
 
 
-DeviceManager::handler(Button* action_button,Button* rigth_button , Button* left_button)
+
+
+void DeviceManager::handler(Button* action_button,Button* rigth_button , Button* left_button)
+
 {
+
 
   state_action_btn = action_button->isClicked();
   state_long_pressed_action_btn = action_button->isLongedPressed(1000);
@@ -126,7 +179,8 @@ DeviceManager::handler(Button* action_button,Button* rigth_button , Button* left
   }
 
 
-  
+  DeviceManager::verify_timers_and_update();
+  DeviceManager::verify_is_active();
 
 
 }

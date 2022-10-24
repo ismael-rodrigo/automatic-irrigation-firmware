@@ -94,10 +94,23 @@
      <ITEM name="TopLineAddress">00000020</ITEM>
     </PROPERTIES>
    </POPUP>
+<<<<<<< HEAD
+   <POPUP w="450" x="1284" flags="00000023" y="135" h="250" pid="0" iid="9">
+    <PROPERTIES>
+     <ITEM name="AutoEcho">0</ITEM>
+     <ITEM name="HexMode">0</ITEM>
+    </PROPERTIES>
+   </POPUP>
+   <POPUP w="156" x="975" flags="00008001" y="388" h="72" pid="1" iid="8">
+    <PROPERTIES/>
+   </POPUP>
+   <POPUP w="8" x="78" flags="00000008" y="169" h="8" pid="2" iid="8">
+=======
    <POPUP w="226" x="38" flags="00000008" y="129" h="215" pid="3" iid="9">
     <PROPERTIES/>
    </POPUP>
    <POPUP w="8" x="58" flags="0000000a" y="149" h="1" pid="10" iid="9">
+>>>>>>> 586d100ceb84522a1ab47cd4e08b86ef2bf21f0f
     <PROPERTIES>
      <ITEM name="DataType">2</ITEM>
      <ITEM name="DispChars">Yes</ITEM>
@@ -107,6 +120,8 @@
      <ITEM name="TopLineAddress">00000000</ITEM>
     </PROPERTIES>
    </POPUP>
+<<<<<<< HEAD
+=======
    <POPUP w="8" x="78" flags="0000000a" y="169" h="32" pid="6" iid="9">
     <PROPERTIES>
      <ITEM name="DataType">2</ITEM>
@@ -157,6 +172,7 @@
      <ITEM name="TopLineAddress">00000020</ITEM>
     </PROPERTIES>
    </POPUP>
+>>>>>>> 586d100ceb84522a1ab47cd4e08b86ef2bf21f0f
   </PWI>
  </MODULE>
 </WORKSPACE>
