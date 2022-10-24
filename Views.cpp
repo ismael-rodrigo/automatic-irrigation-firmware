@@ -4,8 +4,9 @@
 #include <LiquidCrystal_I2C.h>
 
 int device_id = 0;
-int menu_id = 0;
 
+bool flag_last_or_now_show;
+int menu_id = 0;
 int config_page = 0;
 
 // =============== CONFIGS SETED ===============//
@@ -21,6 +22,8 @@ int mode = 0;
 // =============== CONFIGS  ====================//
 
 int flow_rate_in_seconds;
+
+
 
 DeviceManager::view(bool state_long_pressed_action_btn, bool action_button ,bool rigth_button ,bool left_button)
 {
@@ -51,7 +54,7 @@ DeviceManager::view(bool state_long_pressed_action_btn, bool action_button ,bool
       
       if(rigth_button) if(device_id == _lengh_devices) device_id =0; else device_id++;
       if(left_button) if(device_id == 0) device_id = _lengh_devices; else device_id--;
-      //if(action_button) _devices[device_id].is_active = !_devices[device_id].is_active;
+      if(action_button) flag_last_or_now_show = !flag_last_or_now_show;
 
       DeviceManager::devices_view();
 
@@ -75,21 +78,21 @@ DeviceManager::devices_view(){
   lcd.print(_devices[device_id].device_name);
   lcd.setCursor(0, 1);
 
-  if(rtc.now().second()%2 == 1){
+  if(flag_last_or_now_show){
     lcd.print("prox:");
+    lcd.print(_devices[device_id].next_active.day());
+    lcd.print(" as ");
     lcd.print(_devices[device_id].next_active.hour());
-    lcd.print("-");
+    lcd.print(":");
     lcd.print(_devices[device_id].next_active.minute());
-    lcd.print("-");
-    lcd.print(_devices[device_id].next_active.second());
   }
   else {
     lcd.print("ult:");
+    lcd.print(_devices[device_id].last_active.day());
+    lcd.print(" as ");
     lcd.print(_devices[device_id].last_active.hour());
-    lcd.print("-");
+    lcd.print(":");
     lcd.print(_devices[device_id].last_active.minute());
-    lcd.print("-");
-    lcd.print(_devices[device_id].last_active.second());
   }
 
 
