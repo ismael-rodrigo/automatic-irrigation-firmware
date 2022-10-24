@@ -37,7 +37,8 @@ void DeviceManager::rtc_init()
   rtc.begin();
   delay(50);
   for (int x; x < _lengh_devices + 1 ; x++){
-    _devices[x].next_active = rtc.now() + TimeSpan(0, _devices[x].delay_automatic_active, 0, 0);
+    //_devices[x].next_active = rtc.now() + TimeSpan(0, _devices[x].delay_automatic_active, 0, 0);
+    _devices[x].next_active = rtc.now() + TimeSpan(0, 0, 0, _devices[x].delay_automatic_active);
   };
 
 }
@@ -103,10 +104,10 @@ bool DeviceManager::is_changed()
 
 
 
+
 void DeviceManager::updateSettingsDevice(int device_id)
 {
-  _devices[device_id].next_active = rtc.now();
-  _devices[device_id].next_active = _devices[device_id].next_active + TimeSpan(0, 0, 0, _devices[device_id].delay_automatic_active);
+  _devices[device_id].next_active = rtc.now() + TimeSpan(0, 0, 0, _devices[device_id].delay_automatic_active);
 
   EEPROM.update(((device_id+1)*10) + 1 , _devices[device_id].delay_automatic_active );
 
@@ -121,30 +122,29 @@ void DeviceManager::updateSettingsDevice(int device_id)
 void DeviceManager::verify_timers_and_update()
 {
   for(int x = 0; x < _lengh_devices + 1 ; x++){
-    
     if( rtc.now() >= _devices[x].next_active ){
-      _devices[x].is_active = true ;
-      
+      _devices[x].is_active = true ;  
     }
   }
 }
 
-DateTime active_time;
+
+
 void DeviceManager::verify_is_active()
 {
   for(int x = 0; x < _lengh_devices + 1 ; x++){
     
     if(_devices[x].is_active && !digitalRead(_devices[x].device_pin)){
-      active_time = rtc.now() + TimeSpan(0, 0, 0, _devices[x].flow_rate);
+      _devices[x].now_active = rtc.now() + TimeSpan(0, 0, 0, _devices[x].flow_rate);
+      digitalWrite(_devices[x].device_pin , HIGH);
     }
-    if(_devices[x].is_active)
+    if(_devices[x].is_active && digitalRead(_devices[x].device_pin))
     {
-      digitalWrite(_devices[x].device_pin , true);
-      if(active_time < rtc.now()){
+      if(rtc.now() >= _devices[x].now_active ){
         _devices[x].is_active = false;
         _devices[x].last_active = rtc.now();
         _devices[x].next_active = rtc.now() + TimeSpan(0, 0, 0, _devices[x].delay_automatic_active);
-        digitalWrite(_devices[x].device_pin , false);
+        digitalWrite(_devices[x].device_pin , LOW);
       }
     }
 
@@ -160,12 +160,8 @@ void DeviceManager::verify_is_active()
 void DeviceManager::handler(Button* action_button,Button* rigth_button , Button* left_button)
 
 {
-
-
   state_action_btn = action_button->isClicked();
   state_long_pressed_action_btn = action_button->isLongedPressed(1000);
-
-
   state_rigth_btn  = rigth_button->isClicked();
   state_left_btn   = left_button->isClicked();
 

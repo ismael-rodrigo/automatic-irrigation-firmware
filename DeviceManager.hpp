@@ -23,6 +23,7 @@ struct Device {
 
     DateTime next_active; // next time for active device
     DateTime last_active;
+    DateTime now_active;
   };
 
 
@@ -68,7 +69,6 @@ class DeviceManager
   private:
     void verify_timers_and_update();
     
-
     Device _devices[10];
     int _lengh_devices;
 

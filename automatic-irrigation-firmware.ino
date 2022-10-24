@@ -50,5 +50,5 @@ void setup()
 void loop() 
 {
   device.handler(&ActiveButton , &RightButton ,&LeftButton );
-  delay(100);
+  delay(4);
 }

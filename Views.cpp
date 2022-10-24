@@ -51,7 +51,7 @@ DeviceManager::view(bool state_long_pressed_action_btn, bool action_button ,bool
       
       if(rigth_button) if(device_id == _lengh_devices) device_id =0; else device_id++;
       if(left_button) if(device_id == 0) device_id = _lengh_devices; else device_id--;
-      if(action_button) _devices[device_id].is_active = !_devices[device_id].is_active;
+      //if(action_button) _devices[device_id].is_active = !_devices[device_id].is_active;
 
       DeviceManager::devices_view();
 
