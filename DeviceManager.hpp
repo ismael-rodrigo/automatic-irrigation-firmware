@@ -5,6 +5,8 @@
 #include <Wire.h>
 #include <LiquidCrystal_I2C.h>
 #include "Button.hpp"
+#include "RTClib.h"
+
 
 
 struct Device {
@@ -17,8 +19,11 @@ struct Device {
     int flow_rate; // open valve visibly in display
     int flow_rate_sec; // flow rate seted in timer in seconds
 
-    String next_active; // next time for active device
+    DateTime next_active; // next time for active device
+    DateTime last_active;
   };
+
+
 
 
 
@@ -28,13 +33,18 @@ class DeviceManager
 
   public:
     LiquidCrystal_I2C lcd;
+    RTC_DS3231 rtc;
     DeviceManager(struct Device devices[]);
+    
 
     bool is_changed();
 
-    int lcd_init();
+    void rtc_init();
 
-    int devices_init();
+
+    void lcd_init();
+
+    void devices_init();
 
     int view(bool state_long_pressed_action_btn ,bool action_button , bool rigth_button ,bool left_button);
     int devices_view();
@@ -44,19 +54,25 @@ class DeviceManager
 
     void delayMessage(bool* flag);
 
-    int handler(Button* action_button ,Button* rigth_button , Button* left_button);
+    void handler(Button* action_button ,Button* rigth_button , Button* left_button);
 
-    void updateSettingsDevice(int device_id , int delay_automatic_active ,int opening_hours , int flow_rate , int flow_rate_display_labels);
+    void updateSettingsDevice(int device_id);
+    void verify_is_active();
+
+    
+
 
   private:
+    void verify_timers_and_update();
+    
+
     Device _devices[10];
     int _lengh_devices;
 
     String _MENU;
     int _DEVICE_SELECTED;
     bool _flag_active_message = false ;
-
-
+    
 
 
 };

@@ -33,7 +33,7 @@ DeviceManager::view(bool state_long_pressed_action_btn, bool action_button ,bool
       if(index_flow_rate >= 2) flow_rate_in_seconds = flow_rates[index_flow_rate]*60 ;
       else flow_rate_in_seconds = flow_rates[index_flow_rate];
 
-      DeviceManager::updateSettingsDevice(device_id, fibonacci[index_fibonacci], mode, flow_rate_in_seconds ,flow_rates[index_flow_rate] );
+      DeviceManager::updateSettingsDevice(device_id);
       index_fibonacci = 0;
       index_flow_rate = 0;
       mode = 0; 
@@ -74,8 +74,25 @@ DeviceManager::devices_view(){
   lcd.setCursor(0, 0);
   lcd.print(_devices[device_id].device_name);
   lcd.setCursor(0, 1);
-  if(_devices[device_id].is_active) lcd.print("ATIVADO");
-  else lcd.print("DESATIVADO");
+
+  if(rtc.now().second()%2 == 1){
+    lcd.print("prox:");
+    lcd.print(_devices[device_id].next_active.hour());
+    lcd.print("-");
+    lcd.print(_devices[device_id].next_active.minute());
+    lcd.print("-");
+    lcd.print(_devices[device_id].next_active.second());
+  }
+  else {
+    lcd.print("ult:");
+    lcd.print(_devices[device_id].last_active.hour());
+    lcd.print("-");
+    lcd.print(_devices[device_id].last_active.minute());
+    lcd.print("-");
+    lcd.print(_devices[device_id].last_active.second());
+  }
+
+
 }
 
 
