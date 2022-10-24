@@ -27,6 +27,7 @@ lcd(0x27,16,2)
   }
   _lengh_devices = sizeof(devices);
 
+
   
 
 }
@@ -149,6 +150,7 @@ void DeviceManager::verify_is_active()
 
     
   }
+
 }
 
 
@@ -156,6 +158,7 @@ void DeviceManager::verify_is_active()
 
 
 void DeviceManager::handler(Button* action_button,Button* rigth_button , Button* left_button)
+
 {
 
 
